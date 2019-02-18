@@ -9,7 +9,7 @@
 
 
 #define MAKE_R(p)												\
-	struct reader_data * r = (Reader) (p + 1);
+	struct reader_data * r = (struct reader_data *) (p + 1);
 
 
 struct reader_data
@@ -108,10 +108,6 @@ char * reader_makeword(Reader p, char * word)
 
 void reader_destructor (Reader p)
 {
-	MAKE_R(p);
-	
 	free(p);
-	free(r);
-	
 }
 

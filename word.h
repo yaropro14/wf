@@ -7,16 +7,31 @@
 #include <string.h>
 
 
-struct word
+typedef struct word_fn * Word;
+
+
+struct word_data
 {
 	char * word;
 	int frequency;
 };
 
 
-void word_add(struct word * place_in_dictionary);
-void word_print(struct word place_in_dictionary);
-struct word word_create(char * word);
+struct word_fn
+{
+	void (* add)(struct word_data * place_in_dictionary);
+	void (* print)(struct word_data place_in_dictionary);
+	struct word_data (* new_word)(char * word);
+	void (* destructor)(Word p);
+};
+
+
+void word_add(struct word_data * place_in_dictionary);
+void word_print(struct word_data place_in_dictionary);
+struct word_data word_new_word(char * word);
+Word word_create();
+void word_destructor(Word p);
+
 
 
 #endif

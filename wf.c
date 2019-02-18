@@ -8,7 +8,7 @@
 #include "reader.h"
 
 
-void make_word(Reader pr);
+void make_word(Reader pr, Dictionary pd, Word pw);
 
 
 int main(int argc, char * argv[])
@@ -17,29 +17,31 @@ int main(int argc, char * argv[])
 	
 	Reader pr = reader_create();
 	
-	dict_create();
+	Dictionary pd = dict_create();
+	
+	Word pw = word_create();
 	
 	for(i = 1; i < argc; i ++)
 	{
 		pr->openfile(pr, argv[i]);
-		make_word(pr);
+		make_word(pr, pd, pw);
 		
 	}
 	
 	if(i == 1)
 	{
-		make_word(pr);
+		make_word(pr, pd, pw);
 	}
 	
-	dictionary_print();
+	pd->print_all(pd, pw);
 	
-	//pr->destructor(pr);
+	pr->destructor(pr);
 	
 	return 0;
 }
 
 
-void make_word(Reader pr)
+void make_word(Reader pr, Dictionary pd, Word pw)
 {
 	for( ; ; ) 
 	{
@@ -49,13 +51,13 @@ void make_word(Reader pr)
 		if(word == NULL)
 			break;
 			
-		struct word * p = search_in_dictionary(word);
+		struct word_data * p = pd->search_word(pd, word);
 		
 		if(p == NULL)
-			dictionary_push(word);
+			pd->push(pd, word, pw);
 			
 		else
-			word_add(p);
+			pw->add(p);
 
 	}
 }
