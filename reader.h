@@ -6,17 +6,20 @@
 #include <ctype.h>
 #include <string.h>
 
+typedef struct reader_fn * Reader;
 
-struct read
+struct reader_fn
 {
-	int fd; // fd = 0 - read from stdin, fd = 1 - read from file.
-	FILE * file_in;
-} reader;
+	void (* openfile)(Reader p, char * file_name);
+	char * (* getword)(Reader p);
+	void (* destructor)(Reader p);
+};
 
-void make_read();
-void reader_openfile(char * file);
-char * reader_getword();
-char * read_word(char * word);
 
+Reader reader_create();
+void reader_openfile(Reader p, char * file_name);
+char * reader_getword(Reader p);
+char * reader_makeword(Reader p, char * word);
+void reader_destructor (Reader p);
 
 #endif

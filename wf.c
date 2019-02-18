@@ -8,56 +8,54 @@
 #include "reader.h"
 
 
-void make_word(int number_of_files, int open_files);
+void make_word(Reader pr);
 
 
 int main(int argc, char * argv[])
 {	
-	int number_of_files = argc - 1;
-	int open_files = 0;
+	int i = 0;
 	
-	make_read();
+	Reader pr = reader_create();
 	
-	dictionary();
+	dict_create();
 	
-	while(open_files < number_of_files)
+	for(i = 1; i < argc; i ++)
 	{
-		reader_openfile(argv[open_files + 1]);
-		open_files ++;
-		
-		make_word(number_of_files, open_files);
+		pr->openfile(pr, argv[i]);
+		make_word(pr);
 		
 	}
 	
-	if(open_files == 0)
+	if(i == 1)
 	{
-		make_word(number_of_files, open_files);
+		make_word(pr);
 	}
 	
 	dictionary_print();
 	
+	//pr->destructor(pr);
 	
 	return 0;
 }
 
 
-void make_word(int number_of_files, int open_files)
+void make_word(Reader pr)
 {
 	for( ; ; ) 
 	{
 
-		char * word = reader_getword();
+		char * word = pr->getword(pr);
 		
 		if(word == NULL)
 			break;
 			
-		struct word * place_in_dictionary = search_in_dictionary(word);
+		struct word * p = search_in_dictionary(word);
 		
-		if(place_in_dictionary == NULL)
+		if(p == NULL)
 			dictionary_push(word);
 			
 		else
-			word_add(place_in_dictionary);
+			word_add(p);
 
 	}
 }

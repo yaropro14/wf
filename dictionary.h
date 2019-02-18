@@ -15,7 +15,7 @@ struct dictionary
 } dict;
 
 
-void dictionary();
+void dict_create();
 struct word * search_in_dictionary(char * word);
 struct word * search_in_dictionary(char * word);
 void dictionary_push(char * word);

@@ -8,35 +8,64 @@
 #include "reader.h"
 
 
-void make_read()
-{
-	reader.fd = 0;
-	reader.file_in = stdin;
-}
+#define MAKE_R(p)												\
+	struct reader_data * r = (Reader) (p + 1);
 
 
-void reader_openfile(char * file_name)
+struct reader_data
 {
-	reader.fd = 1;
+	int fd; // fd = 0 - read from stdin, fd = 1 - read from file.
+	FILE * file_in;
+};
+
+
+Reader reader_create()
+{
+	void * pr = calloc(1, sizeof(struct reader_fn) + sizeof(struct reader_data));
 	
-	reader.file_in = fopen(file_name, "r");
+	Reader p = (Reader) pr;
+	MAKE_R(p);
+	
+	p->openfile = reader_openfile;
+	p->getword = reader_getword;
+	p->destructor = reader_destructor;
+	
+	r->fd = 0;
+	r->file_in = stdin;
+	
+	return p;
 }
 
 
-char * reader_getword()
+void reader_openfile(Reader p, char * file_name)
+{
+	MAKE_R(p);
+	
+	if(r->file_in)
+		fclose(r->file_in);
+	
+	r->fd = 1;
+	
+	r->file_in = fopen(file_name, "r");
+}
+
+
+char * reader_getword(Reader p)
 {
 	char * word = NULL;
 	
-	word = read_word(word);
+	word = reader_makeword(p, word);
 		
 	return word;
 }
 
 
 
-char * read_word(char * word)
+char * reader_makeword(Reader p, char * word)
 {
-	if(reader.file_in == NULL)
+	MAKE_R(p);
+	
+	if(r->file_in == NULL)
 	{
 		printf("ERROR\n");
 		return NULL;
@@ -49,7 +78,7 @@ char * read_word(char * word)
 	
 	for( ; ; )
 	{
-		char c = (char) fgetc(reader.file_in);
+		char c = (char) fgetc(r->file_in);
 		
 		if(c == EOF)
 		{
@@ -73,6 +102,16 @@ char * read_word(char * word)
 			
 	}
 	
+	
+}
+
+
+void reader_destructor (Reader p)
+{
+	MAKE_R(p);
+	
+	free(p);
+	free(r);
 	
 }
 

@@ -9,7 +9,7 @@
 #include "reader.h"
 
 
-void dictionary()
+void dict_create()
 {
 	dict.words = (struct word *) calloc (1, sizeof(struct word));
 }
